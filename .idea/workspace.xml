@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d9e8c4c7-6062-4bfc-892b-a9f0ecc75db1" name="Changes" comment="add identifiers and keywords recognition to the Scanner">
-      <change afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Expression.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/makinginterpreters/tools/GenerateAST.java" afterDir="false" />
+    <list default="true" id="d9e8c4c7-6062-4bfc-892b-a9f0ecc75db1" name="Changes" comment="add AST generation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jLox.iml" beforeDir="false" afterPath="$PROJECT_DIR$/jLox.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Expr.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Expr.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/tools/GenerateAST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/tools/GenerateAST.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,20 +50,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Downloaded.Files.Path.Enabled": "false",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "true",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+    &quot;Repository.Attach.JavaDocs&quot;: &quot;true&quot;,
+    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.makinginterpreters.jlox" />
@@ -178,7 +177,8 @@
     <MESSAGE value="make them understand strings" />
     <MESSAGE value="add number literals processing to the Scanner" />
     <MESSAGE value="add identifiers and keywords recognition to the Scanner" />
-    <option name="LAST_COMMIT_MESSAGE" value="add identifiers and keywords recognition to the Scanner" />
+    <MESSAGE value="add AST generation" />
+    <option name="LAST_COMMIT_MESSAGE" value="add AST generation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
