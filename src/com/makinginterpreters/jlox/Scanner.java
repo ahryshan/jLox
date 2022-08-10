@@ -84,6 +84,8 @@ public class Scanner {
             case '/' -> {
                 if (match('/')) {
                     while (peek() != '\n' && current <= source.length() - 1) advance();
+                } else if (match('*')) {
+                    commentBlock();
                 } else {
                     addToken(SLASH);
                 }
@@ -184,5 +186,15 @@ public class Scanner {
         if (type == null) type = IDENTIFIER;
 
         addToken(type);
+    }
+
+    private void commentBlock() {
+        while(!(Character.toString(peek()) + Character.toString(peek(1))).equals("*/")) {
+            if(advance() == '\n') line++;
+            if((Character.toString(peek()) + Character.toString(peek(1))).equals("/*")) {
+                commentBlock();
+            }
+        }
+        current+=2;
     }
 }
