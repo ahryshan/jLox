@@ -18,7 +18,7 @@ public class Scanner {
     }
 
     public List<Token> scanTokens() {
-        while (!isAtEnd()) {
+        while (!isEnd()) {
             start = current;
             scanToken();
         }
@@ -27,13 +27,18 @@ public class Scanner {
         return tokens;
     }
 
-    private boolean isAtEnd() {
-        return this.current >= source.length();
+    private boolean isEnd() {
+        return isEnd(0);
+    }
+    private boolean isEnd(int offset) {
+        return this.current + offset >= source.length();
     }
 
     private void scanToken() {
         char c = advance();
         switch (c) {
+
+            // one character tokens
             case '(' -> addToken(LEFT_PAREN);
             case ')' -> addToken(RIGHT_PAREN);
             case '{' -> addToken(LEFT_BRACE);
@@ -45,11 +50,13 @@ public class Scanner {
             case ';' -> addToken(SEMICOLON);
             case '*' -> addToken(STAR);
 
+            // logic operators and assign
             case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
             case '=' -> addToken(match('=') ? EQUAL_EQUAL : EQUAL);
             case '<' -> addToken(match('=') ? LESS_EQUAL : LESS);
             case '>' -> addToken(match('=') ? GREATER_EQUAL : GREATER);
 
+            // process slashes or comments
             case '/' -> {
                 if (match('/')) {
                     while (peek() != '\n' && current <= source.length() - 1) advance();
@@ -58,6 +65,7 @@ public class Scanner {
                 }
             }
 
+            // process strings
             case '"' -> string();
 
 
@@ -65,7 +73,13 @@ public class Scanner {
             }
             case '\n' -> line++;
 
-            default -> Lox.error(line, "Unexpected symbol: \"" + c + "\".");
+            default -> {
+                if(isDigit(c)) {
+                    number();
+                } else {
+                    Lox.error(line, "Unexpected symbol: \"" + c + "\".");
+                }
+            }
         }
     }
 
@@ -83,29 +97,48 @@ public class Scanner {
     }
 
     private boolean match(char expected) {
-        if (isAtEnd()) return false;
+        if (isEnd()) return false;
         if (source.charAt(current) != expected) return false;
 
         current++;
         return true;
     }
 
+    private char peek(int offset) {
+        if (isEnd(offset)) return '\0';
+        return source.charAt(current + offset);
+    }
+
     private char peek() {
-        if (isAtEnd()) return '\0';
-        return source.charAt(current);
+        return peek(0);
     }
 
     private void string() {
-        while (peek() != '"' && !isAtEnd()) {
+        while (peek() != '"' && !isEnd()) {
             if (peek() == '\n') line++;
             advance();
         }
-        if (isAtEnd()) {
+        if (isEnd()) {
             Lox.error(line, "Unterminated string");
             return;
         }
         advance();
         String value = source.substring(start + 1, current - 1);
         addToken(STRING, value);
+    }
+
+    private boolean isDigit(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private void number() {
+        while(isDigit(peek())) advance();
+        if(peek() == '.' && isDigit(peek(1))) {
+            advance();
+            while(isDigit(peek())) advance();
+            addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
+            return;
+        }
+        addToken(NUMBER, Integer.parseInt(source.substring(start, current)));
     }
 }
