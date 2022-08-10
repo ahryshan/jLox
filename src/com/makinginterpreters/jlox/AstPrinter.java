@@ -2,6 +2,7 @@ package com.makinginterpreters.jlox;
 
 public class AstPrinter implements Expr.Visitor<String> {
 	String print(Expr expr) {
+		if(expr == null) return null;
 		return expr.accept(this);
 	}
 
@@ -41,7 +42,9 @@ public class AstPrinter implements Expr.Visitor<String> {
 
 	/**
 	 * Some little entry point to check if printer works correctly.
-	 * @param args
+	 * @param args should be ignored. Doesn't get used in any form.
+	 *
+	 * @apiNote btw, must print "(* (- 123) (group 45.67))"
 	 */
 	public static void main(String[] args) {
 		Expr expression = new Expr.Binary(
