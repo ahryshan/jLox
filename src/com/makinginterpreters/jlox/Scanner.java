@@ -1,13 +1,36 @@
 package com.makinginterpreters.jlox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.makinginterpreters.jlox.TokenType.*;
 
 public class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
+
+    private static final Map<String, TokenType> keywords;
+
+    static {
+        keywords = new HashMap<>();
+        keywords.put("class", CLASS);
+        keywords.put("else", ELSE);
+        keywords.put("false", FALSE);
+        keywords.put("for", FOR);
+        keywords.put("fun", FUN);
+        keywords.put("if", IF);
+        keywords.put("nil", NIL);
+        keywords.put("or", OR);
+        keywords.put("print", PRINT);
+        keywords.put("return", RETURN);
+        keywords.put("super", SUPER);
+        keywords.put("this", THIS);
+        keywords.put("true", TRUE);
+        keywords.put("var", VAR);
+        keywords.put("while", WHILE);
+    }
 
     private int start = 0;
     private int current = 0;
@@ -30,6 +53,7 @@ public class Scanner {
     private boolean isEnd() {
         return isEnd(0);
     }
+
     private boolean isEnd(int offset) {
         return this.current + offset >= source.length();
     }
@@ -74,8 +98,10 @@ public class Scanner {
             case '\n' -> line++;
 
             default -> {
-                if(isDigit(c)) {
+                if (isDigit(c)) {
                     number();
+                } else if (isAlpha(c)) {
+                    identifier();
                 } else {
                     Lox.error(line, "Unexpected symbol: \"" + c + "\".");
                 }
@@ -128,17 +154,35 @@ public class Scanner {
     }
 
     private boolean isDigit(char c) {
-        return c >= '0' && c <= '9';
+        return Character.toString(c).matches("[0-9]");
     }
 
     private void number() {
-        while(isDigit(peek())) advance();
-        if(peek() == '.' && isDigit(peek(1))) {
+        while (isDigit(peek())) advance();
+        if (peek() == '.' && isDigit(peek(1))) {
             advance();
-            while(isDigit(peek())) advance();
+            while (isDigit(peek())) advance();
             addToken(NUMBER, Double.parseDouble(source.substring(start, current)));
             return;
         }
         addToken(NUMBER, Integer.parseInt(source.substring(start, current)));
+    }
+
+    private boolean isAlpha(char c) {
+        return Character.toString(c).matches("[A-Za-z_]");
+    }
+
+    private boolean isAlphanumeric(char c) {
+        return isAlpha(c) || isDigit(c);
+    }
+
+    private void identifier() {
+        while (isAlphanumeric(peek())) advance();
+
+        String text = source.substring(start, current);
+        TokenType type = keywords.get(text);
+        if (type == null) type = IDENTIFIER;
+
+        addToken(type);
     }
 }
