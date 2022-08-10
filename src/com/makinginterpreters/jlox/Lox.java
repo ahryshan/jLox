@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Lox {
     public static boolean hadError = false;
@@ -15,8 +17,9 @@ public class Lox {
             System.out.println("Usage: lox [path/to/script]");
             System.exit(64);
         } else if (args.length == 1) {
-            System.out.println("This will run scripts some day!");
-            runFile(args[0]);
+            String pathToScript = args[0];
+            if (!pathToScript.endsWith(".lox")) pathToScript += ".lox";
+            runFile(pathToScript);
         } else {
             System.out.println("This will start prompts some day!");
             runPrompt();
@@ -24,9 +27,16 @@ public class Lox {
     }
 
     private static void runFile(String path) throws IOException {
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
+        byte[] bytes;
+        try {
+            bytes = Files.readAllBytes(Paths.get(path));
+        } catch (NoSuchFileException e) {
+            System.out.println("Cannot find file: \"" + path + '"');
+            System.exit(65);
+            return;
+        }
         run(new String(bytes, Charset.defaultCharset()));
-        if(hadError) System.exit(65);
+        if (hadError) System.exit(65);
     }
 
     private static void runPrompt() throws IOException {
@@ -43,15 +53,19 @@ public class Lox {
     }
 
     private static void run(String source) {
-        //TODO actual implementation of this;
+        Scanner scanner = new Scanner(source);
+        List<Token> tokens = scanner.scanTokens();
+        for (Token token : tokens) {
+            System.out.println(token);
+        }
     }
 
-    private static void error(int line, String message) {
+    public static void error(int line, String message) {
         report(line, "", message);
         hadError = true;
     }
 
     private static void report(int line, String where, String message) {
-        System.out.println("[line " + line + "] Error" + where + ": ");
+        System.out.println("[line " + line + "] Error" + where + ": " + message);
     }
 }
