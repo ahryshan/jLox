@@ -55,17 +55,26 @@ public class Lox {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        Parser parser = new Parser(tokens);
+        AstPrinter printer = new AstPrinter();
+        Expr expr = parser.parse();
+        System.out.println(printer.print(expr));
     }
 
     public static void error(int line, String message) {
         report(line, "", message);
         hadError = true;
     }
+    public static void error(Token token, String message) {
+        if(token.type == TokenType.EOF) {
+            report(token.line, "at the end", message);
+        } else {
+            report(token.line, "at \"" + token.lexeme + '"', message);
+        }
+        hadError = true;
+    }
 
     private static void report(int line, String where, String message) {
-        System.out.println("[line " + line + "] Error" + where + ": " + message);
+        System.out.println("[line " + line + "] Error " + where + ": " + message);
     }
 }

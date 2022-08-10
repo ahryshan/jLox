@@ -29,7 +29,7 @@ public class GenerateAST {
         String path = outputDir + "/" + baseName + ".java";
         File newFile = new File(path);
         try {
-            if(newFile.createNewFile()) {
+            if (newFile.createNewFile()) {
                 System.out.println("File successfully created");
             } else {
                 System.out.println("File already exists");
@@ -44,15 +44,19 @@ public class GenerateAST {
         writer.print(
                 "package com.makinginterpreters.jlox;\n" +
                         "\n" +
-                        "import java.util.List;\n" +
-                        "\n" +
                         "public abstract class " + baseName + " {\n"
         );
+
+        defineVisitor(writer, baseName, types);
+
         for (String type : types) {
             String className = type.split(":")[0].trim();
             String fields = type.split(":")[1].trim();
             defineType(writer, baseName, className, fields);
         }
+        writer.println();
+        writer.println("  abstract <R> R accept(Visitor<R> visitor);");
+        writer.println();
         writer.println("}");
         writer.close();
     }
@@ -71,9 +75,27 @@ public class GenerateAST {
         }
         writer.println("        }");
         writer.println("");
+        writer.println();
+        writer.println("    @Override");
+        writer.println("    <R> R accept(Visitor<R> visitor) {");
+        writer.println("      return visitor.visit" +
+                className + baseName + "(this);");
+        writer.println("    }");
         for (String field : fields) {
             writer.println("        final " + field + ";");
         }
+        writer.println("    }");
+    }
+
+    private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
+        writer.println("    interface Visitor<R> {");
+
+        for (String type : types) {
+            String typeName = type.split(":")[0].trim();
+            writer.println("        R visit" + typeName + baseName + "(" +
+                    typeName + " " + baseName.toLowerCase() + ");");
+        }
+
         writer.println("    }");
     }
 }
