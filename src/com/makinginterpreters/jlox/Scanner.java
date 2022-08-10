@@ -18,7 +18,7 @@ public class Scanner {
     }
 
     public List<Token> scanTokens() {
-        while(!isAtEnd()) {
+        while (!isAtEnd()) {
             start = current;
             scanToken();
         }
@@ -44,6 +44,27 @@ public class Scanner {
             case '+' -> addToken(PLUS);
             case ';' -> addToken(SEMICOLON);
             case '*' -> addToken(STAR);
+
+            case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
+            case '=' -> addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+            case '<' -> addToken(match('=') ? LESS_EQUAL : LESS);
+            case '>' -> addToken(match('=') ? GREATER_EQUAL : GREATER);
+
+            case '/' -> {
+                if (match('/')) {
+                    while (peek() != '\n' && current <= source.length() - 1) advance();
+                } else {
+                    addToken(SLASH);
+                }
+            }
+
+            case '"' -> string();
+
+
+            case ' ', '\t', '\r' -> {
+            }
+            case '\n' -> line++;
+
             default -> Lox.error(line, "Unexpected symbol: \"" + c + "\".");
         }
     }
@@ -59,5 +80,32 @@ public class Scanner {
     private void addToken(TokenType type, Object literal) {
         String text = source.substring(start, current);
         tokens.add(new Token(type, text, literal, line));
+    }
+
+    private boolean match(char expected) {
+        if (isAtEnd()) return false;
+        if (source.charAt(current) != expected) return false;
+
+        current++;
+        return true;
+    }
+
+    private char peek() {
+        if (isAtEnd()) return '\0';
+        return source.charAt(current);
+    }
+
+    private void string() {
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\n') line++;
+            advance();
+        }
+        if (isAtEnd()) {
+            Lox.error(line, "Unterminated string");
+            return;
+        }
+        advance();
+        String value = source.substring(start + 1, current - 1);
+        addToken(STRING, value);
     }
 }
