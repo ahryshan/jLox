@@ -56,6 +56,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Object> {
 	@Override
 	public Object visitPrintStmt(Stmt.Print stmt) {
 		Object value = evaluate(stmt.expression);
+		if(value == null) {
+			System.out.println("nil");
+			return null;
+		}
 		System.out.println(value.toString());
 		return null;
 	}
