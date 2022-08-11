@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d9e8c4c7-6062-4bfc-892b-a9f0ecc75db1" name="Changes" comment="add workspace.xml to gitignore">
-      <change afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Interpreter.java" afterDir="false" />
+    <list default="true" id="d9e8c4c7-6062-4bfc-892b-a9f0ecc75db1" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grammar" beforeDir="false" afterPath="$PROJECT_DIR$/grammar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Interpreter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Interpreter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Lox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Lox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Parser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/jlox/Parser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/makinginterpreters/tools/GenerateAST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/makinginterpreters/tools/GenerateAST.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -233,7 +236,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/com/makinginterpreters/jlox/Interpreter.java</url>
-          <line>82</line>
+          <line>95</line>
           <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>

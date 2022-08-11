@@ -1,6 +1,8 @@
 package com.makinginterpreters.jlox;
 
-public class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Object> {
 
 	public static class RuntimeError extends RuntimeException {
 		final Token token;
@@ -11,19 +13,29 @@ public class Interpreter implements Expr.Visitor<Object> {
 		}
 	}
 
-	public Object interpret(Expr expression) {
-		if (expression == null) {
-			return "nil";
-		}
+	public void interpret(List<Stmt> statements) {
 		try {
-			Object value = evaluate(expression);
-			if(value == null) return "nil";
-			return value;
+			if (statements == null) return;
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
 		} catch (RuntimeError error) {
 			Lox.runtimeError(error);
 		}
-		return "";
 	}
+
+	@Override
+	public Object visitExpressionStmt(Stmt.Expression stmt) {
+		return evaluate(stmt.expression);
+	}
+
+	@Override
+	public Object visitPrintStmt(Stmt.Print stmt) {
+		Object value = evaluate(stmt.expression);
+		System.out.println(value.toString());
+		return null;
+	}
+
 	@Override
 	public Object visitBinaryExpr(Expr.Binary expr) {
 		Object left = evaluate(expr.left);
@@ -87,9 +99,14 @@ public class Interpreter implements Expr.Visitor<Object> {
 		}
 	}
 
+	private void execute(Stmt stmt) {
+		if (stmt == null) return;
+		stmt.accept(this);
+	}
+
 	private Object evaluate(Expr expr) {
 		Object result = expr.accept(this);
-		if(result instanceof Number && assertWholeNumber(result)) {
+		if (result instanceof Number && assertWholeNumber(result)) {
 			return asInt(result);
 		}
 		return result;
@@ -99,9 +116,8 @@ public class Interpreter implements Expr.Visitor<Object> {
 		if (obj == null) return false;
 		if (obj instanceof Boolean) return (boolean) obj;
 		if (obj instanceof String && obj != "") return true;
-		if ((obj instanceof Integer || obj instanceof Double)) {
-			assert obj instanceof Double;
-			return (Double) obj != 0;
+		if (obj instanceof Number) {
+			return asDouble(obj) != 0;
 		}
 		return false;
 	}
@@ -140,6 +156,6 @@ public class Interpreter implements Expr.Visitor<Object> {
 	}
 
 	private boolean assertWholeNumber(Object o) {
-		return (double)asDouble(o) == (int)asInt(o);
+		return (double) asDouble(o) == (int) asInt(o);
 	}
 }

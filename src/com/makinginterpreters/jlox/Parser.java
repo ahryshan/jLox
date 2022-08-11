@@ -1,5 +1,6 @@
 package com.makinginterpreters.jlox;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.makinginterpreters.jlox.TokenType.*;
@@ -43,13 +44,36 @@ public class Parser {
 		}
 	}
 
-	public Expr parse() {
+	public List<Stmt> parse() {
 		try{
-			return expression();
+			List<Stmt> statements = new ArrayList<>();
+			while (!isAtEnd()) {
+				statements.add(statement());
+			}
+			return statements;
 		} catch (ParseError error) {
 			return null;
 		}
 	}
+
+	private Stmt statement() {
+		if(match(PRINT)) return printStatement();
+		return expressionStatement();
+	}
+
+	private Stmt expressionStatement() {
+		Expr value = expression();
+		consume(SEMICOLON, "Expect \";\" after expression.");
+		return new Stmt.Expression(value);
+	}
+
+	private Stmt printStatement() {
+		Expr value = expression();
+		consume(SEMICOLON, "Expect \";\" after expression.");
+		return new Stmt.Print(value);
+	}
+
+
 	private Expr expression() {
 		return equality();
 	}

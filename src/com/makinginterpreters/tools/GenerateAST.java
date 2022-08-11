@@ -22,6 +22,11 @@ public class GenerateAST {
                     "Literal  : Object value",
                     "Unary    : Token operator, Expr right"
             ));
+
+            defineAst(outputDirPath, "Stmt", Arrays.asList(
+                    "Expression : Expr expression",
+                    "Print : Expr expression"
+            ));
         }
     }
 
