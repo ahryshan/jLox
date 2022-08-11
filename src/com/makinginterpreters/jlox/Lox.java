@@ -13,6 +13,8 @@ public class Lox {
 	public static boolean hadError = false;
 	private static boolean hadRuntimeError = false;
 
+	private static final Interpreter interpreter = new Interpreter();
+
 	public static void main(String[] args) throws IOException {
 		if (args.length > 1) {
 			System.out.println("Usage: lox [path/to/script]");
@@ -59,8 +61,6 @@ public class Lox {
 		List<Token> tokens = scanner.scanTokens();
 		Parser parser = new Parser(tokens);
 		List<Stmt> statements = parser.parse();
-		Interpreter interpreter = new Interpreter();
-		// TODO
 		interpreter.interpret(statements);
 	}
 

@@ -45,10 +45,10 @@ public class Parser {
 	}
 
 	public List<Stmt> parse() {
-		try{
+		try {
 			List<Stmt> statements = new ArrayList<>();
 			while (!isAtEnd()) {
-				statements.add(statement());
+				statements.add(declaration());
 			}
 			return statements;
 		} catch (ParseError error) {
@@ -56,8 +56,29 @@ public class Parser {
 		}
 	}
 
+	private Stmt declaration() {
+		try{
+			if (match(VAR)) return varDeclaration();
+			return statement();
+		} catch (ParseError e) {
+			synchronize();
+			return null;
+		}
+	}
+
+	private Stmt varDeclaration() {
+		Token name = consume(IDENTIFIER, "Expect a variable name.");
+		Expr initializer = null;
+		if(match(EQUAL))  {
+			initializer = expression();
+		}
+
+		consume(SEMICOLON, "Expeceted \";\" at the end of expression.");
+		return new Stmt.Var(name, initializer);
+	}
+
 	private Stmt statement() {
-		if(match(PRINT)) return printStatement();
+		if (match(PRINT)) return printStatement();
 		return expressionStatement();
 	}
 
@@ -75,7 +96,25 @@ public class Parser {
 
 
 	private Expr expression() {
-		return equality();
+		return assignment();
+	}
+
+	private Expr assignment() {
+		Expr expr = equality();
+
+		if(match(EQUAL)) {
+			Token equals = previous();
+			Expr value = assignment();
+
+			if(expr instanceof Expr.Variable) {
+				Token name = ((Expr.Variable) expr).name;
+				return new Expr.Assign(name, value);
+			}
+
+			throw error(equals, "Invalid assignment target");
+		}
+
+		return expr;
 	}
 
 	private Expr equality() {
@@ -135,13 +174,15 @@ public class Parser {
 	}
 
 	private Expr primary() {
-		if(match(FALSE)) return new Expr.Literal(false);
-		if(match(TRUE))return new Expr.Literal(true);
-		if(match(NIL)) return new Expr.Literal(null);
+		if (match(FALSE)) return new Expr.Literal(false);
+		if (match(TRUE)) return new Expr.Literal(true);
+		if (match(NIL)) return new Expr.Literal(null);
 
-		if(match(STRING, NUMBER)) return new Expr.Literal(previous().literal);
+		if (match(STRING, NUMBER)) return new Expr.Literal(previous().literal);
 
-		if(match(LEFT_PAREN)) {
+		if(match(IDENTIFIER)) return new Expr.Variable(previous());
+
+		if (match(LEFT_PAREN)) {
 			Expr expr = expression();
 			consume(RIGHT_PAREN, "Expect \")\" after expression.");
 			return new Expr.Grouping(expr);
@@ -182,7 +223,7 @@ public class Parser {
 	}
 
 	private Token consume(TokenType type, String message) {
-		if(check(type)) return advance();
+		if (check(type)) return advance();
 		throw error(peek(), message);
 	}
 }
